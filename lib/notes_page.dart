@@ -86,7 +86,8 @@ class _NotesPageState extends State<NotesPage> {
       return GestureDetector(
         onTap: () async {
           await Navigator.of(context).push(
-              MaterialPageRoute(builder: (context)=>NoteDetailPage(noteId: note.id!))
+              //MaterialPageRoute(builder: (context)=>NoteDetailPage(noteId: note.id!))
+              MaterialPageRoute(builder: (context)=>AddEditNotePage(note: note))
           );
 
           refreshNotes();

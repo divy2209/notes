@@ -3,12 +3,12 @@ import 'package:intl/intl.dart';
 import 'package:notes/model/note.dart';
 
 final _lightColors = [
+  Colors.blueGrey.shade900,
   Colors.amber.shade300,
   Colors.lightGreen.shade300,
   Colors.lightBlue.shade300,
   Colors.orange.shade300,
   Colors.pinkAccent.shade100,
-  Colors.tealAccent.shade100
 ];
 
 class NoteCardWidget extends StatelessWidget {
@@ -23,7 +23,7 @@ class NoteCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = _lightColors[index % _lightColors.length];
+    final color = _lightColors[note.number];
     final time = DateFormat.yMMMd().format(note.createdTime);
     final minHeight = getMinHeight(index);
 

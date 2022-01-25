@@ -1,8 +1,34 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/database/notes_database.dart';
 import 'package:notes/widgets/note_form_widget.dart';
 
 import 'model/note.dart';
+
+final _lightColors = [
+  Colors.blueGrey.shade900,
+  Colors.amber.shade300,
+  Colors.lightGreen.shade300,
+  Colors.lightBlue.shade300,
+  Colors.orange.shade300,
+  Colors.pinkAccent.shade100,
+];
+
+final _months = [
+  "null",
+  "Jan",
+  "Feb",
+  "Mar",
+  "April",
+  "May",
+  "June",
+  "July",
+  "Aug",
+  "Sept",
+  "Oct",
+  "Nov",
+  "Dec"
+];
 
 class AddEditNotePage extends StatefulWidget {
   final Note? note;
@@ -35,22 +61,42 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [buildButton()],
-      ),
-      body: Form(
-        key: _formKey,
-        child: NoteFormWidget(
-          isImportant: isImportant,
-          number: number,
-          title: title,
-          description: description,
-          onChangedImportant: (isImportant) =>
-              setState(() => this.isImportant = isImportant),
-          onChangedNumber: (number) => setState(() => this.number = number),
-          onChangedTitle: (title) => setState(() => this.title = title),
-          onChangedDescription: (description) => setState(() => this.description = description)
+    Size size = MediaQuery.of(context).size;
+    return WillPopScope(
+      onWillPop: addOrUpdateNote,
+      child: Scaffold(
+        backgroundColor: _lightColors.elementAt(number),
+        appBar: AppBar(
+          actions: [pinButton(), deleteButton()],
+        ),
+        bottomNavigationBar: SizedBox(
+          height: 60,
+          width: size.width,
+          child: Center(
+            child: Row(
+              children: [
+                SizedBox(width: size.width*0.02,),
+                colorButton(),
+                SizedBox(width: size.width*0.22,),
+                Text("Edited " + widget.note!.createdTime.day.toString() + " " + _months.elementAt(widget.note!.createdTime.month) + " " + widget.note!.createdTime.year.toString(),
+                style: const TextStyle(color: Colors.white, fontSize: 13),)
+              ],
+            ),
+          ),
+        ),
+        body: Form(
+          key: _formKey,
+          child: NoteFormWidget(
+            isImportant: isImportant,
+            number: number,
+            title: title,
+            description: description,
+            /*onChangedImportant: (isImportant) =>
+                setState(() => this.isImportant = isImportant),*/
+            onChangedNumber: (number) => setState(() => this.number = number),
+            onChangedTitle: (title) => setState(() => this.title = title),
+            onChangedDescription: (description) => setState(() => this.description = description)
+          ),
         ),
       ),
     );
@@ -72,8 +118,23 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
     );
   }
 
-  void addOrUpdateNote() async {
+  void unFocus() {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+      currentFocus.focusedChild!.unfocus();
+    }
+  }
+
+  Future<bool> addOrUpdateNote() async {
     final isValid = _formKey.currentState!.validate();
+    if(title.isEmpty && description.isEmpty){
+      if(widget.note!=null){
+        await NotesDatabase.instance.delete(widget.note!.id);
+      } else {
+        Navigator.pop(context);
+        unFocus();
+      }
+    }
 
     if(isValid){
       final isUpdating = widget.note != null;
@@ -83,9 +144,10 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
       } else {
         await addNote();
       }
-
       Navigator.of(context).pop();
+      unFocus();
     }
+    return Future.value(false);
   }
 
   Future updateNote() async {
@@ -110,4 +172,77 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
 
     await NotesDatabase.instance.create(note);
   }
+
+  Widget deleteButton() => IconButton(
+    icon: const Icon(Icons.delete),
+    onPressed: () async {
+      if(widget.note!=null) {
+        await NotesDatabase.instance.delete(widget.note!.id);
+      }
+      Navigator.of(context).pop();
+      unFocus();
+    },
+  );
+
+  Widget pinButton() => IconButton(
+    icon: isImportant ? const Icon(Icons.push_pin) : const Icon(Icons.push_pin_outlined),
+    onPressed: () async {
+      setState(() {
+        isImportant = !isImportant;
+      });
+    },
+  );
+
+  Widget colorButton() => IconButton(
+    icon: const Icon(Icons.palette_outlined, color: Colors.white, size: 26,),
+    splashColor: Colors.transparent,
+    onPressed: (){
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: _lightColors.elementAt(number),
+        builder: (context) {
+          return SizedBox(
+            height: 120,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10,),
+                Row(
+                  children: const [
+                    SizedBox(width: 10,),
+                    Text("Colour", style: TextStyle(color: Colors.white),),
+                  ],
+                ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      color(),
+                      Container(
+                        //child: Text("HEY"),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        }
+      );
+    },
+  );
+
+  Widget color() => Container(
+    width: 20,
+    height: 20,
+    margin: const EdgeInsets.all(25),
+    decoration: const BoxDecoration(
+      shape: BoxShape.circle,
+      color: Colors.white
+    ),
+  );
 }

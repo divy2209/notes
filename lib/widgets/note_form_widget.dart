@@ -5,7 +5,7 @@ class NoteFormWidget extends StatelessWidget {
   final int? number;
   final String? title;
   final String? description;
-  final ValueChanged<bool> onChangedImportant;
+  //final ValueChanged<bool> onChangedImportant;
   final ValueChanged<int> onChangedNumber;
   final ValueChanged<String> onChangedTitle;
   final ValueChanged<String> onChangedDescription;
@@ -16,7 +16,7 @@ class NoteFormWidget extends StatelessWidget {
     this.number = 0,
     this.title = "",
     this.description = "",
-    required this.onChangedImportant,
+    //required this.onChangedImportant,
     required this.onChangedNumber,
     required this.onChangedTitle,
     required this.onChangedDescription
@@ -28,14 +28,14 @@ class NoteFormWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Row(
               children: [
-                Switch(
+                /*Switch(
                   value: isImportant ?? false,
                   onChanged: onChangedImportant,
-                ),
+                ),*/
                 Expanded(
                   child: Slider(
                     value: (number ?? 0).toDouble(),
@@ -76,7 +76,8 @@ class NoteFormWidget extends StatelessWidget {
   );
 
   Widget buildDescription() => TextFormField(
-    maxLines: 5,
+    cursorColor: Colors.greenAccent,
+    maxLines: null,
     initialValue: description,
     style: const TextStyle(color: Colors.white60, fontSize: 18),
     decoration: const InputDecoration(

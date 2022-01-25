@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:notes/notes_page.dart';
 
+// https://www.youtube.com/watch?v=zkxBSCig3zs
+// https://www.youtube.com/watch?v=UpKrhZ0Hppk
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
