@@ -25,7 +25,8 @@ class NotesDatabase {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const boolType = 'BOOLEAN NOT NULL';
     const integerType = 'INTEGER NOT NULL';
-    const textType = 'TEXT NOT NULL';
+    //const textType = 'TEXT NOT NULL';
+    const textType = 'TEXT';
 
     await db.execute('''
     CREATE TABLE $tableNotes (
@@ -66,11 +67,27 @@ class NotesDatabase {
     }
   }
 
-  Future<List<Note>> readAllNotes() async {
+  /*Future<List<Note>> readAllNotes() async {
     final db = await instance.database;
     const orderBy = '${NoteFields.time} ASC';
     //final result = await db.rawQuery('SELECT * FROM $tableNotes ORDER BY $orderBy');
     final result = await db.query(tableNotes, orderBy: orderBy);
+    return result.map((json)=>Note.fromJson(json)).toList();
+  }*/
+
+  Future<List<Note>> readPinnedNotes() async {
+    final db = await instance.database;
+    const orderBy = '${NoteFields.time} ASC';
+    //final result = await db.rawQuery('SELECT * FROM $tableNotes ORDER BY $orderBy');
+    final result = await db.query(tableNotes, orderBy: orderBy, where: '${NoteFields.isImportant} = true');
+    return result.map((json)=>Note.fromJson(json)).toList();
+  }
+
+  Future<List<Note>> readUnPinnedNotes() async {
+    final db = await instance.database;
+    const orderBy = '${NoteFields.time} ASC';
+    //final result = await db.rawQuery('SELECT * FROM $tableNotes ORDER BY $orderBy');
+    final result = await db.query(tableNotes, orderBy: orderBy, where: '${NoteFields.isImportant} = false');
     return result.map((json)=>Note.fromJson(json)).toList();
   }
 

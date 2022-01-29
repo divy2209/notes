@@ -1,72 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:notes/model/note.dart';
-
-final _lightColors = [
-  Colors.blueGrey.shade900,
-  Colors.amber.shade300,
-  Colors.lightGreen.shade300,
-  Colors.lightBlue.shade300,
-  Colors.orange.shade300,
-  Colors.pinkAccent.shade100,
-];
+import 'package:notes/service/config.dart';
 
 class NoteCardWidget extends StatelessWidget {
   final Note note;
-  final int index;
 
   const NoteCardWidget({
     Key? key,
     required this.note,
-    required this.index
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final color = _lightColors[note.number];
-    final time = DateFormat.yMMMd().format(note.createdTime);
-    final minHeight = getMinHeight(index);
+    final color = lightColors[note.number];
+    //final dots = getDescription(note.description);
 
     return Card(
       color: color,
+      elevation: 0,
       child: Container(
-        constraints: BoxConstraints(minHeight: minHeight),
+        constraints: const BoxConstraints(maxHeight: 240),
         padding: const EdgeInsets.all(8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              time,
-              style: TextStyle(color: Colors.grey.shade700),
-            ),
-            const SizedBox(height: 4,),
-            Text(
+            //const SizedBox(height: 4,),
+            note.title.isNotEmpty ? Text(
               note.title,
               style: const TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 20,
-                fontWeight: FontWeight.bold
+                fontWeight: FontWeight.w700
               ),
-            )
+            ) : const SizedBox(),
+            const SizedBox(height: 8,),
+            note.description.isNotEmpty ? Text(
+              note.description,
+              maxLines: 10,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ) : const SizedBox()
           ],
         ),
       ),
     );
   }
 
-  double getMinHeight(int index) {
-    switch (index % 4){
-      case 0:
-        return 100;
-      case 1:
-        return 150;
-      case 2:
-        return 150;
-      case 3:
-        return 100;
-      default:
-        return 100;
-    }
-  }
+  // https://stackoverflow.com/questions/54091055/flutter-how-to-get-the-number-of-text-lines
+  /*String getDescription(String str) {
+    // Not the right way, in case of new lines, this will differ a lot
+    final span = TextSpan(text: str, style: const TextStyle(fontSize: 16));
+    final tp = TextPainter(text: span, maxLines: 10);
+    return tp.didExceedMaxLines ? "..." : "";
+  }*/
 }
