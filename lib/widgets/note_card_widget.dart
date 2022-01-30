@@ -19,7 +19,7 @@ class NoteCardWidget extends StatelessWidget {
       color: color,
       elevation: 0,
       child: Container(
-        constraints: const BoxConstraints(maxHeight: 240),
+        constraints: const BoxConstraints(maxHeight: 265),
         padding: const EdgeInsets.all(8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -28,11 +28,13 @@ class NoteCardWidget extends StatelessWidget {
             //const SizedBox(height: 4,),
             note.title.isNotEmpty ? Text(
               note.title,
+              maxLines: 2,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
                 fontWeight: FontWeight.w700
               ),
+              overflow: TextOverflow.ellipsis,
             ) : const SizedBox(),
             const SizedBox(height: 8,),
             note.description.isNotEmpty ? Text(

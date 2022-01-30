@@ -66,7 +66,7 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
                       SizedBox(width: size.width*0.02,),
                       colorButton(),
                       SizedBox(width: size.width*0.22,),
-                      Text("Edited " + DateFormat.yMMMd().format(widget.note?.createdTime ?? DateTime.now()).toString(),
+                      Text("Created " + DateFormat.yMMMd().format(widget.note?.createdTime ?? DateTime.now()).toString(),
                         style: const TextStyle(color: Colors.white, fontSize: 13),)
                     ],
                   ),
